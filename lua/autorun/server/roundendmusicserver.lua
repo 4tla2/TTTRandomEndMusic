@@ -1,7 +1,7 @@
 --[[
     Written by 4tla2
-    Under following license:
-    https://creativecommons.org/licenses/by-nc-sa/4.0/
+    Using the Unlicense
+    https://unlicense.org
 ]]
 if SERVER then
 
@@ -35,7 +35,7 @@ if SERVER then
 
     --The Magic
     function roundend(wintype)
-
+        print ("[End_Random_Music] Wintype is: "..wintype)
 
         --Search for files
         filesGlobal = {}
@@ -73,7 +73,7 @@ if SERVER then
 
         --Shuffel and send info to client
         if (filesGlobal != nil) then
-            --Unspecific wintyp
+            --Unspecific wintype
             if (GetConVar("ttt_end_random_music_wintype"):GetString() == "0") then
                 for n = 0, 10 do
                     math.randomseed(os.time())
@@ -87,7 +87,7 @@ if SERVER then
                 --Standard TTT
                 if (branch == "ttt") then
                     --Inno
-                    if (wintype == "WIN_INNOCENT" || wintype == "WIN_TIMELIMIT") then
+                    if (wintype == 3 || wintype == 4) then
                         if (filesInnocent != nil) then
                             for n = 0, 10 do
                                 math.randomseed(os.time())
@@ -97,11 +97,11 @@ if SERVER then
                                 net.WriteString( "innocent/"..filesInnocent[musicTitle] );
                             net.Broadcast();
                         else
-                            print("[End_Random_Music] Error: No files to play for wintyp")
+                            print("[End_Random_Music] Error: No files to play for wintype")
                         end
                     --Traitor
                     if (filesTraitor != nil) then
-                        elseif (wintype == "WIN_TRAITOR") then
+                        elseif (wintype == 2) then
                             for n = 0, 10 do
                                 math.randomseed(os.time())
                                 musicTitle = math.random(table.getn(filesTraitor))
@@ -110,7 +110,7 @@ if SERVER then
                                 net.WriteString( "traitor/"..filesTraitor[musicTitle] );
                             net.Broadcast();
                         else
-                            print("[End_Random_Music] Error: No files to play for wintyp")
+                            print("[End_Random_Music] Error: No files to play for wintype")
                         end
                     --Other
                     else
@@ -123,13 +123,13 @@ if SERVER then
                                 net.WriteString( "other/"..filesOther[musicTitle] );
                             net.Broadcast();
                         else
-                            print("[End_Random_Music] Error: No files to play for wintyp")
+                            print("[End_Random_Music] Error: No files to play for wintype")
                         end
                     end
                 --TTT2
                 elseif (branch == "ttt2") then
                     --Inno
-                    if (wintype == "innocents" || wintype == "4") then
+                    if (wintype == "innocents" || wintype == 4) then
                         if (filesInnocent != nil) then
                             for n = 0, 10 do
                                 math.randomseed(os.time())
@@ -139,7 +139,7 @@ if SERVER then
                                 net.WriteString( "innocent/"..filesInnocent[musicTitle] );
                             net.Broadcast();
                         else
-                            print("[End_Random_Music] Error: No files to play for wintyp")
+                            print("[End_Random_Music] Error: No files to play for wintype")
                         end
                     --Traitor
                     elseif (wintype == "traitors") then
@@ -152,7 +152,7 @@ if SERVER then
                                 net.WriteString( "traitor/"..filesTraitor[musicTitle] );
                             net.Broadcast();
                         else
-                            print("[End_Random_Music] Error: No files to play for wintyp")
+                            print("[End_Random_Music] Error: No files to play for wintype")
                         end
                     --Other
                     else
@@ -165,7 +165,7 @@ if SERVER then
                                 net.WriteString( "other/"..filesOther[musicTitle] );
                             net.Broadcast();
                         else
-                            print("[End_Random_Music] Error: No files to play for wintyp")
+                            print("[End_Random_Music] Error: No files to play for wintype")
                         end
                     end
                 end
@@ -175,6 +175,7 @@ if SERVER then
             end
         else
             print ("[End_Random_Music] Error: No files provided to load.")
+        end
     end
     --Programm itself
     hook.Add("TTTEndRound","lul", roundend)

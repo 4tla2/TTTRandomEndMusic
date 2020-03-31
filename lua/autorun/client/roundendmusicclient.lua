@@ -1,3 +1,8 @@
+--[[
+    Written by 4tla2
+    Using the Unlicense
+    https://unlicense.org
+]]
 if CLIENT then
     if(file.Exists("music/end_random_music/innocent" , "DATA") && file.Exists("music/end_random_music/traitor" , "DATA") && file.Exists("music/end_random_music/other" , "DATA")) then
         print ("[End_Random_Music] Folder check successful.")
@@ -15,7 +20,7 @@ if CLIENT then
             if ( IsValid( station ) ) then
                 station:Play()
             else
-                print( "[End_Random_Music]Error playing sound!", errCode, errStr )
+                print( "[End_Random_Music] Error playing sound!", errCode, errStr )
             end
         end )
     end )
