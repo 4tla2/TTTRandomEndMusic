@@ -448,7 +448,7 @@ if SERVER then
                                 musicTitle = math.random(table.getn(filesTTT2Pirate))
                             end
                             net.Start("ttt_end_random_music");
-                                net.WriteString( "ttt2_pirates/"..filesTTT2Pirate[musicTitle] );
+                                net.WriteString( "ttt2_pirate/"..filesTTT2Pirate[musicTitle] );
                             net.Broadcast();
                         else
                             print("[End_Random_Music] Error: No files to play for wintype")
