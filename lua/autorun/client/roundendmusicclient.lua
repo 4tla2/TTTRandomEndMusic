@@ -4,6 +4,7 @@
     https://unlicense.org
 ]]
 if CLIENT then
+    CreateConVar("ttt_end_random_music_source", 0, FCVAR_REPLICATED, "Switches search place from data/ to sound/", 0, 1)
     if (SystemType == "/") then --Check OS Type
         print ("[End_Random_Music] OS check successful: Using Unixlike OS.")
     elseif (SystemType == "\\") then
@@ -175,8 +176,15 @@ if CLIENT then
         end
     end
     net.Receive( "ttt_end_random_music", function( byte, Player )
+        if (GetConVar("ttt_end_random_music_source"):GetString() == "0") then
+            filePath = "data/"
+        elseif (GetConVar("ttt_end_random_music_source"):GetString() == "1") then
+            filePath = "sound/"
+        else
+            print ("[End_Random_Music] Error with ConVar")
+        end
         local text = net.ReadString( );
-        playurl = "data/music/end_random_music/" .. text;
+        playurl = filePath .. "music/end_random_music/" .. text;
         print ("[End_Random_Music] trying to play:" .. playurl);
         sound.PlayFile( playurl, "noplay", function( station, errCode, errStr )
             if ( IsValid( station ) ) then

@@ -9,6 +9,7 @@ if SERVER then
     local SystemType = package.config:sub(1,1)
     CreateConVar("ttt_end_random_music_wintype", 0, FCVAR_SERVER_CAN_EXECUTE, "Enable if you want teamspecific win music at the end of the round", 0, 1)
     CreateConVar("ttt_end_random_music_silentscan", 0, FCVAR_SERVER_CAN_EXECUTE, "Enable if you don't want to the Addon to print all found files out after Roundend", 0, 1)
+    CreateConVar("ttt_end_random_music_source", 0, FCVAR_REPLICATED, "Switches search place from data/ to sound/. Use only if you know, what you do.", 0, 1)
     util.AddNetworkString("ttt_end_random_music")
 
     --On Boot
@@ -54,137 +55,155 @@ if SERVER then
     else
         branch = "ttt"
     end
-    if (file.Exists("music/end_random_music/innocent" , "DATA") && file.Exists("music/end_random_music/traitor" , "DATA") && file.Exists("music/end_random_music/other" , "DATA")) then --Check for folder
-        print ("[End_Random_Music] Basic folder check successful.")
-        print ("[End_Random_Music] Checking for extra folders.")
-        if (branch == "ttt2") then
-            if (ttt2jackal_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_jackal", "DATA")) then
-                    print ("[End_Random_Music] Found Jackal folder.")
-                else
-                    print ("[End_Random_Music] Missing Jackal folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_jackal")
+    if (GetConVar("ttt_end_random_music_source"):GetString() == "0") then
+        if (file.Exists("music/end_random_music/innocent" , "DATA") && file.Exists("music/end_random_music/traitor" , "DATA") && file.Exists("music/end_random_music/other" , "DATA")) then --Check for folder
+            print ("[End_Random_Music] Basic folder check successful.")
+            print ("[End_Random_Music] Checking for extra folders.")
+            if (branch == "ttt2") then
+                if (ttt2jackal_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_jackal", "DATA")) then
+                        print ("[End_Random_Music] Found Jackal folder.")
+                    else
+                        print ("[End_Random_Music] Missing Jackal folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_jackal")
+                    end
                 end
-            end
-            if (ttt2infected_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_infected", "DATA")) then
-                    print ("[End_Random_Music] Found Infected folder.")
-                else
-                    print ("[End_Random_Music] Missing Infected folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_infected")
+                if (ttt2infected_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_infected", "DATA")) then
+                        print ("[End_Random_Music] Found Infected folder.")
+                    else
+                        print ("[End_Random_Music] Missing Infected folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_infected")
+                    end
                 end
-            end
-            if (ttt2jester_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_jester", "DATA")) then
-                    print ("[End_Random_Music] Found Jester folder.")
-                else
-                    print ("[End_Random_Music] Missing Jester folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_jester")
+                if (ttt2jester_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_jester", "DATA")) then
+                        print ("[End_Random_Music] Found Jester folder.")
+                    else
+                        print ("[End_Random_Music] Missing Jester folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_jester")
+                    end
                 end
-            end
-            if (ttt2marker_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_marker", "DATA")) then
-                    print ("[End_Random_Music] Found Marker folder.")
-                else
-                    print ("[End_Random_Music] Missing Marker folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_marker")
+                if (ttt2marker_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_marker", "DATA")) then
+                        print ("[End_Random_Music] Found Marker folder.")
+                    else
+                        print ("[End_Random_Music] Missing Marker folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_marker")
+                    end
                 end
-            end
-            if (ttt2pirate_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_pirate", "DATA")) then
-                    print ("[End_Random_Music] Found Pirate folder.")
-                else
-                    print ("[End_Random_Music] Missing Pirate folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_pirate")
+                if (ttt2pirate_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_pirate", "DATA")) then
+                        print ("[End_Random_Music] Found Pirate folder.")
+                    else
+                        print ("[End_Random_Music] Missing Pirate folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_pirate")
+                    end
                 end
-            end
-            if (ttt2necromancer_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_necromancer", "DATA")) then
-                    print ("[End_Random_Music] Found Necromancer folder.")
-                else
-                    print ("[End_Random_Music] Missing Necromancer folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_necromancer")
+                if (ttt2necromancer_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_necromancer", "DATA")) then
+                        print ("[End_Random_Music] Found Necromancer folder.")
+                    else
+                        print ("[End_Random_Music] Missing Necromancer folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_necromancer")
+                    end
                 end
-            end
-            if (ttt2serialkiller_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_serialkiller", "DATA")) then
-                    print ("[End_Random_Music] Found Serialkiller folder.")
-                else
-                    print ("[End_Random_Music] Missing Serialkiller folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_serialkiller")
+                if (ttt2serialkiller_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_serialkiller", "DATA")) then
+                        print ("[End_Random_Music] Found Serialkiller folder.")
+                    else
+                        print ("[End_Random_Music] Missing Serialkiller folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_serialkiller")
+                    end
                 end
+            else
             end
         else
+            print ("[End_Random_Music] Basic folder check failed. Creating missing folders.");
+            file.CreateDir("music/end_random_music/innocent");
+            file.CreateDir("music/end_random_music/traitor");
+            file.CreateDir("music/end_random_music/other");
+            print ("[End_Random_Music] Checking for extra folders.")
+            if (branch == "ttt2") then
+                if (ttt2jackal_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_jackal", "DATA")) then
+                        print ("[End_Random_Music] Found Jackal folder.")
+                    else
+                        print ("[End_Random_Music] Missing Jackal folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_jackal")
+                    end
+                end
+                if (ttt2infected_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_infected", "DATA")) then
+                        print ("[End_Random_Music] Found Infected folder.")
+                    else
+                        print ("[End_Random_Music] Missing Infected folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_infected")
+                    end
+                end
+                if (ttt2jester_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_jester", "DATA")) then
+                        print ("[End_Random_Music] Found Jester folder.")
+                    else
+                        print ("[End_Random_Music] Missing Jester folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_jester")
+                    end
+                end
+                if (ttt2marker_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_marker", "DATA")) then
+                        print ("[End_Random_Music] Found Marker folder.")
+                    else
+                        print ("[End_Random_Music] Missing Marker folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_marker")
+                    end
+                end
+                if (ttt2pirate_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_pirate", "DATA")) then
+                        print ("[End_Random_Music] Found Pirate folder.")
+                    else
+                        print ("[End_Random_Music] Missing Pirate folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_pirate")
+                    end
+                end
+                if (ttt2necromancer_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_necromancer", "DATA")) then
+                        print ("[End_Random_Music] Found Necromancer folder.")
+                    else
+                        print ("[End_Random_Music] Missing Necromancer folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_necromancer")
+                    end
+                end
+                if (ttt2serialkiller_true == 1) then
+                    if (file.Exists("music/end_random_music/ttt2_serialkiller", "DATA")) then
+                        print ("[End_Random_Music] Found Serialkiller folder.")
+                    else
+                        print ("[End_Random_Music] Missing Serialkiller folder. Creating...")
+                        file.CreateDir("music/end_random_music/ttt2_serialkiller")
+                    end
+                end
+            else
+            end
         end
+
+    elseif (GetConVar("ttt_end_random_music_source"):GetString() == "1") then
+        print ("[End_Random_Music] No folder check performend (disabled by ConVar).")
     else
-        print ("[End_Random_Music] Basic folder check failed. Creating missing folders.");
-        file.CreateDir("music/end_random_music/innocent");
-        file.CreateDir("music/end_random_music/traitor");
-        file.CreateDir("music/end_random_music/other");
-        print ("[End_Random_Music] Checking for extra folders.")
-        if (branch == "ttt2") then
-            if (ttt2jackal_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_jackal", "DATA")) then
-                    print ("[End_Random_Music] Found Jackal folder.")
-                else
-                    print ("[End_Random_Music] Missing Jackal folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_jackal")
-                end
-            end
-            if (ttt2infected_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_infected", "DATA")) then
-                    print ("[End_Random_Music] Found Infected folder.")
-                else
-                    print ("[End_Random_Music] Missing Infected folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_infected")
-                end
-            end
-            if (ttt2jester_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_jester", "DATA")) then
-                    print ("[End_Random_Music] Found Jester folder.")
-                else
-                    print ("[End_Random_Music] Missing Jester folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_jester")
-                end
-            end
-            if (ttt2marker_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_marker", "DATA")) then
-                    print ("[End_Random_Music] Found Marker folder.")
-                else
-                    print ("[End_Random_Music] Missing Marker folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_marker")
-                end
-            end
-            if (ttt2pirate_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_pirate", "DATA")) then
-                    print ("[End_Random_Music] Found Pirate folder.")
-                else
-                    print ("[End_Random_Music] Missing Pirate folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_pirate")
-                end
-            end
-            if (ttt2necromancer_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_necromancer", "DATA")) then
-                    print ("[End_Random_Music] Found Necromancer folder.")
-                else
-                    print ("[End_Random_Music] Missing Necromancer folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_necromancer")
-                end
-            end
-            if (ttt2serialkiller_true == 1) then
-                if (file.Exists("music/end_random_music/ttt2_serialkiller", "DATA")) then
-                    print ("[End_Random_Music] Found Serialkiller folder.")
-                else
-                    print ("[End_Random_Music] Missing Serialkiller folder. Creating...")
-                    file.CreateDir("music/end_random_music/ttt2_serialkiller")
-                end
-            end
-        else
-        end
+        print ("[End_Random_Music] Error with ConVar")
     end
+
 
     --The Magic
     function roundend(wintype)
+        if (GetConVar("ttt_end_random_music_source"):GetString() == "0") then
+            fileSearchPath = "DATA"
+            filePath = "music/"
+        elseif (GetConVar("ttt_end_random_music_source"):GetString() == "1") then
+            fileSearchPath = "GAME"
+            filePath = "sound/music/"
+        else
+            print ("[End_Random_Music] Error with ConVar")
+        end
+
         print ("[End_Random_Music] Wintype is: " .. wintype)
 
         --Search for files
@@ -216,75 +235,75 @@ if SERVER then
         if (GetConVar("ttt_end_random_music_silentscan"):GetString() == "0") then
             print ("[End_Random_Music] Searching files:")
         end
-        filesInnocent = file.Find("music/end_random_music/innocent/*.wav", "DATA")
+        filesInnocent = file.Find(filePath .. "end_random_music/innocent/*.wav", fileSearchPath)
         if (filesInnocent != nil) then
             for i = 1, table.getn(filesInnocent), 1 do
                 table.insert(filesGlobal, "innocent/" .. filesInnocent[i])
             end
         end
-        resource.AddFile( "music/end_random_music/innocent/*.wav" )
-        filesTraitor = file.Find("music/end_random_music/traitor/*.wav", "DATA")
+        resource.AddFile( filePath .. "end_random_music/innocent/*.wav" )
+        filesTraitor = file.Find(filePath .. "end_random_music/traitor/*.wav", fileSearchPath)
         if (filesTraitor != nil) then
             for i = 1, table.getn(filesTraitor), 1 do
                 table.insert(filesGlobal, "traitor/" .. filesTraitor[i])
             end
         end
-        filesOther = file.Find("music/end_random_music/other/*.wav", "DATA")
+        filesOther = file.Find(filePath .. "end_random_music/other/*.wav", fileSearchPath)
         if (filesOther != nil) then
             for i = 1, table.getn(filesOther), 1 do
                 table.insert(filesGlobal, "other/" .. filesOther[i])
             end
         end
-        if (file.Exists("music/end_random_music/ttt2_jackal", "DATA")) then
-            filesTTT2Jackal = file.Find("music/end_random_music/ttt2_jackal/*.wav", "DATA")
+        if (file.Exists(filePath .. "end_random_music/ttt2_jackal", fileSearchPath)) then
+            filesTTT2Jackal = file.Find(filePath .. "end_random_music/ttt2_jackal/*.wav", fileSearchPath)
             if (filesTTT2Jackal != nil) then
                 for i = 1, table.getn(filesTTT2Jackal), 1 do
                     table.insert(filesGlobal, "ttt2_jackal/" .. filesTTT2Jackal[i])
                 end
             end
         end
-        if (file.Exists("music/end_random_music/ttt2_infected", "DATA")) then
-            filesTTT2Infected = file.Find("music/end_random_music/ttt2_infected/*.wav", "DATA")
+        if (file.Exists(filePath .. "end_random_music/ttt2_infected", fileSearchPath)) then
+            filesTTT2Infected = file.Find(filePath .. "end_random_music/ttt2_infected/*.wav", fileSearchPath)
             if (filesTTT2Infected != nil) then
                 for i = 1, table.getn(filesTTT2Infected), 1 do
                     table.insert(filesGlobal, "ttt2_infected/" .. filesTTT2Infected[i])
                 end
             end
         end
-        if (file.Exists("music/end_random_music/ttt2_jester", "DATA")) then
-            filesTTT2Jester = file.Find("music/end_random_music/ttt2_jester/*.wav", "DATA")
+        if (file.Exists(filePath .. "end_random_music/ttt2_jester", fileSearchPath)) then
+            filesTTT2Jester = file.Find(filePath .. "end_random_music/ttt2_jester/*.wav", fileSearchPath)
             if (filesTTT2Jester != nil) then
                 for i = 1, table.getn(filesTTT2Jester), 1 do
                     table.insert(filesGlobal, "ttt2_jester/" .. filesTTT2Jester[i])
                 end
             end
         end
-        if (file.Exists("music/end_random_music/ttt2_marker", "DATA")) then
-            filesTTT2Marker = file.Find("music/end_random_music/ttt2_marker/*.wav", "DATA")
+        if (file.Exists(filePath .. "end_random_music/ttt2_marker", fileSearchPath)) then
+            filesTTT2Marker = file.Find(filePath .. "end_random_music/ttt2_marker/*.wav", fileSearchPath)
             if (filesTTT2Marker != nil) then
                 for i = 1, table.getn(filesTTT2Marker), 1 do
                     table.insert(filesGlobal, "ttt2_marker/" .. filesTTT2Marker[i])
                 end
             end
         end
-        if (file.Exists("music/end_random_music/ttt2_pirate", "DATA")) then
-            filesTTT2Pirate = file.Find("music/end_random_music/ttt2_pirate/*.wav", "DATA")
+        if (file.Exists(filePath .. "end_random_music/ttt2_pirate", fileSearchPath)) then
+            filesTTT2Pirate = file.Find(filePath .. "end_random_music/ttt2_pirate/*.wav", fileSearchPath)
             if (filesTTT2Pirate != nil) then
                 for i = 1, table.getn(filesTTT2Pirate), 1 do
                     table.insert(filesGlobal, "ttt2_pirate/" .. filesTTT2Pirate[i])
                 end
             end
         end
-        if (file.Exists("music/end_random_music/ttt2_necromancer", "DATA")) then
-            filesTTT2Necromancer = file.Find("music/end_random_music/ttt2_necromancer/*.wav", "DATA")
+        if (file.Exists(filePath .. "end_random_music/ttt2_necromancer", fileSearchPath)) then
+            filesTTT2Necromancer = file.Find(filePath .. "end_random_music/ttt2_necromancer/*.wav", fileSearchPath)
             if (filesTTT2Necromancer != nil) then
                 for i = 1, table.getn(filesTTT2Necromancer), 1 do
                     table.insert(filesGlobal, "ttt2_necromancer/" .. filesTTT2Necromancer[i])
                 end
             end
         end
-        if (file.Exists("music/end_random_music/ttt2_serialkiller", "DATA")) then
-            filesTTT2Serialkiller = file.Find("music/end_random_music/ttt2_serialkiller/*.wav", "DATA")
+        if (file.Exists(filePath .. "end_random_music/ttt2_serialkiller", fileSearchPath)) then
+            filesTTT2Serialkiller = file.Find(filePath .. "end_random_music/ttt2_serialkiller/*.wav", fileSearchPath)
             if (filesTTT2Serialkiller != nil) then
                 for i = 1, table.getn(filesTTT2Serialkiller), 1 do
                     table.insert(filesGlobal, "ttt2_serialkiller/" .. filesTTT2Serialkiller[i])
