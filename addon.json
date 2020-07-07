@@ -1,13 +1,4 @@
 {
-	"title"		:	"[TTT/2] Random Roundend Music",
-	"type"		:	"Tool",
-	"tags"		:	[ "fun" ],
-	"ignore"	:
-	[
-		"*.psd",
-		"*.vcproj",
-        "*.svn*",
-		"README.md",
-		".git/"
-	]
+	"title": "[TTT/2] Custom Roundend Music [Tool]",
+	"type": "ServerContent"
 }
