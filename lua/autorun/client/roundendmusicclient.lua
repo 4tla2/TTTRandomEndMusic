@@ -6,6 +6,7 @@
 if CLIENT then
     CreateConVar("ttt_end_random_music_source", 0, FCVAR_REPLICATED, "Switches search place from data/ to sound/", 0, 1)
     CreateConVar("ttt_end_random_music_branch", 0, FCVAR_REPLICATED, "Branch", 0, 1)
+    CreateConVar("ttt_end_random_music_timeout_not_innocent", 0, FCVAR_REPLICATED, "If a roundend via timeout should count as its own wintype", 0, 1)
     //if (SystemType == "/") then --Check OS Type
     //    print ("[End_Random_Music] OS check successful: Using Unixlike OS.")
     //elseif (SystemType == "\\") then
@@ -50,6 +51,10 @@ if CLIENT then
         ttt2serialkiller_true = 1
         print ("[End_Random_Music] Found Serialkiller")
     end
+    if (string.find(table.ToString(engine.GetAddons(), "modliste", true), "2487229784", 1) != nil) then --Check for Hidden
+        ttt2hidden_true = 1
+        print ("[End_Random_Music] Found Hidden")
+    end
     if (string.find(table.ToString(engine.GetAddons(), "modliste", true), "2045444087", 1) != nil) then --Check for modified version of Custom Roles for TTT
         ttt_custom_roles_true = 1
         print ("[End_Random_Music] Found modified version of Custom Roles for TTT")
@@ -68,6 +73,14 @@ if CLIENT then
         file.CreateDir("music/end_random_music/traitor");
         file.CreateDir("music/end_random_music/other");
         print ("[End_Random_Music] Checking for extra folders.")
+    end
+    if (GetConVar("ttt_end_random_music_timeout_not_innocent"):GetString() == "1") then
+        if (file.Exists("music/end_random_music/timeout" , "DATA")) then
+            print ("[End_Random_Music] Timeout folder check successful.")
+        else
+            print ("[End_Random_Music] Timeout folder check failed. Creating missing folder.");
+            file.CreateDir("music/end_random_music/timeout");
+        end
     end
     if (branch == "ttt2") then
         if (ttt2jackal_true == 1) then
@@ -124,6 +137,14 @@ if CLIENT then
             else
                 print ("[End_Random_Music] Missing Serialkiller folder. Creating...")
                 file.CreateDir("music/end_random_music/ttt2_serialkiller")
+            end
+        end
+        if (ttt2hidden_true == 1) then
+            if (file.Exists("music/end_random_music/ttt2_hidden", "DATA")) then
+                print ("[End_Random_Music] Found Hidden folder.")
+            else
+                print ("[End_Random_Music] Missing Hidden folder. Creating...")
+                file.CreateDir("music/end_random_music/ttt2_hidden")
             end
         end
     elseif (branch == ttt) then

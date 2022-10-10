@@ -9,7 +9,8 @@ if SERVER then
     local SystemType = package.config:sub(1,1)
     CreateConVar("ttt_end_random_music_wintype", 0, FCVAR_SERVER_CAN_EXECUTE, "Enable if you want teamspecific win music at the end of the round", 0, 1)
     CreateConVar("ttt_end_random_music_silentscan", 0, FCVAR_SERVER_CAN_EXECUTE, "Enable if you don't want to the Addon to print all found files out after Roundend", 0, 1)
-    CreateConVar("ttt_end_random_music_source", 0, FCVAR_REPLICATED, "Switches search place from data/ to sound/. Use only if you know, what you do.", 0, 1)
+    CreateConVar("ttt_end_random_music_source", 0, FCVAR_REPLICATED, "Switches search place from data/ to sound/. Use only if you know, what you do", 0, 1)
+    CreateConVar("ttt_end_random_music_timeout_not_innocent", 0, FCVAR_SERVER_CAN_EXECUTE, "Enable if you don't want that timeouts count to innocents winnings", 0, 1)
     util.AddNetworkString("ttt_end_random_music")
 
     --On Boot
@@ -53,6 +54,10 @@ if SERVER then
             ttt2serialkiller_true = 1
             print ("[End_Random_Music] Found Serialkiller")
         end
+        if (string.find(table.ToString(engine.GetAddons(), "modliste", true), "2487229784", 1) != nil) then --Check for Hidden
+            ttt2hidden_true = 1
+            print ("[End_Random_Music] Found Hidden")
+        end
     else
         branch = "ttt"
         CreateConVar("ttt_end_random_music_branch", 0, FCVAR_REPLICATED, "Branch", 0, 1)
@@ -76,6 +81,14 @@ if SERVER then
             file.CreateDir("music/end_random_music/traitor");
             file.CreateDir("music/end_random_music/other");
             print ("[End_Random_Music] Checking for extra folders.")
+        end
+        if (GetConVar("ttt_end_random_music_timeout_not_innocent"):GetString() == "1") then
+            if (file.Exists("music/end_random_music/timeout" , "DATA")) then --Check for folder
+                print ("[End_Random_Music] Timeout folder check successful.")
+            else
+                print ("[End_Random_Music] Timeout folder check failed. Creating missing folder.")
+                file.CreateDir("music/end_random_music/timeout")
+            end
         end
         if (branch == "ttt2") then
             if (ttt2jackal_true == 1) then
@@ -134,6 +147,14 @@ if SERVER then
                     file.CreateDir("music/end_random_music/ttt2_serialkiller")
                 end
             end
+            if (ttt2hidden_true == 1) then
+                if (file.Exists("music/end_random_music/ttt2_hidden", "DATA")) then
+                    print ("[End_Random_Music] Found Hidden folder.")
+                else
+                    print ("[End_Random_Music] Missing Hidden folder. Creating...")
+                    file.CreateDir("music/end_random_music/ttt2_hidden")
+                end
+            end
         elseif (branch == ttt) then
             if (ttt_custom_roles_true == 1) then
                 if (file.Exists("music/end_random_music/custom_jester", "DATA")) then
@@ -182,6 +203,9 @@ if SERVER then
         filesInnocent = {}
         filesOther = {}
         filesTraitor = {}
+        if (GetConVar("ttt_end_random_music_timeout_not_innocent"):GetString() == "1") then
+            filesTimeout = {}
+        end
         if (ttt2jackal_true == 1) then
             filesTTT2Jackal = {}
         end
@@ -203,7 +227,10 @@ if SERVER then
         if (ttt2serialkiller_true == 1) then
             filesTTT2Serialkiller = {}
         end
-        if (ttt_custom_roles_true == 1) then 
+        if (ttt2hidden_true == 1) then
+            filesTTT2Hidden = {}
+        end
+        if (ttt_custom_roles_true == 1) then
             filesCustomJester = {}
             filesCustomKiller = {}
             filesCustomMonsters = {}
@@ -223,6 +250,12 @@ if SERVER then
         if (filesTraitor != nil) then
             for i = 1, table.getn(filesTraitor), 1 do
                 table.insert(filesGlobal, "traitor/" .. filesTraitor[i])
+            end
+        end
+        filesTimeout = file.Find(filePath .. "end_random_music/timeout/*.wav", fileSearchPath)
+        if (filesTimeout != nil) then
+            for i = 1, table.getn(filesTimeout), 1 do
+                table.insert(filesGlobal, "timeout/" .. filesTimeout[i])
             end
         end
         filesOther = file.Find(filePath .. "end_random_music/other/*.wav", fileSearchPath)
@@ -287,6 +320,14 @@ if SERVER then
                 end
             end
         end
+        if (file.Exists(filePath .. "end_random_music/ttt2_hidden", fileSearchPath)) then
+            filesTTT2Hidden = file.Find(filePath .. "end_random_music/ttt2_hidden/*.wav", fileSearchPath)
+            if (filesTTT2Hidden != nil) then
+                for i = 1, table.getn(filesTTT2Hidden), 1 do
+                    table.insert(filesGlobal, "ttt2_hidden/" .. filesTTT2Hidden[i])
+                end
+            end
+        end
         if (file.Exists(filePath .. "end_random_music/custom_jester", fileSearchPath)) then
             filesCustomJester = file.Find(filePath .. "end_random_music/custom_jester/*.wav", fileSearchPath)
             if (filesCustomJester != nil) then
@@ -342,16 +383,32 @@ if SERVER then
                 if (branch == "ttt") then
                     --Inno
                     if (wintype == 3 || wintype == 4) then
-                        if (filesInnocent != nil) then
-                            for n = 0, 10 do
-                                math.randomseed(os.time())
-                                musicTitle = math.random(table.getn(filesInnocent))
+                        if (GetConVar("ttt_end_random_music_timeout_not_innocent"):GetString() == "0") then
+                            if (filesInnocent != nil) then
+                                for n = 0, 10 do
+                                    math.randomseed(os.time())
+                                    musicTitle = math.random(table.getn(filesInnocent))
+                                end
+                                net.Start("ttt_end_random_music");
+                                    net.WriteString( "innocent/"..filesInnocent[musicTitle] );
+                                net.Broadcast();
+                            else
+                                print("[End_Random_Music] Error: No files to play for wintype")
                             end
-                            net.Start("ttt_end_random_music");
-                                net.WriteString( "innocent/"..filesInnocent[musicTitle] );
-                            net.Broadcast();
                         else
-                            print("[End_Random_Music] Error: No files to play for wintype")
+                            if (wintype == 3) then
+                                if (filesInnocent != nil) then
+                                    for n = 0, 10 do
+                                        math.randomseed(os.time())
+                                        musicTitle = math.random(table.getn(filesInnocent))
+                                    end
+                                    net.Start("ttt_end_random_music");
+                                    net.WriteString( "innocent/"..filesInnocent[musicTitle] );
+                                    net.Broadcast();
+                                else
+                                    print("[End_Random_Music] Error: No files to play for wintype")
+                                end
+                            end
                         end
                     --Traitor
                     elseif (wintype == 2) then
@@ -423,16 +480,44 @@ if SERVER then
                 elseif (branch == "ttt2") then
                     --Inno
                     if (wintype == "innocents" || wintype == 4) then
-                        if (filesInnocent != nil) then
-                            for n = 0, 10 do
-                                math.randomseed(os.time())
-                                musicTitle = math.random(table.getn(filesInnocent))
-                            end
-                            net.Start("ttt_end_random_music");
+                        if (GetConVar("ttt_end_random_music_timeout_not_innocent"):GetString() == "0") then
+                            if (filesInnocent != nil) then
+                                for n = 0, 10 do
+                                    math.randomseed(os.time())
+                                    musicTitle = math.random(table.getn(filesInnocent))
+                                end
+                                net.Start("ttt_end_random_music");
                                 net.WriteString( "innocent/"..filesInnocent[musicTitle] );
-                            net.Broadcast();
+                                net.Broadcast();
+                            else
+                                print("[End_Random_Music] Error: No files to play for wintype")
+                            end
                         else
-                            print("[End_Random_Music] Error: No files to play for wintype")
+                            if (wintype == "innocents") then
+                                if (filesInnocent != nil) then
+                                    for n = 0, 10 do
+                                        math.randomseed(os.time())
+                                        musicTitle = math.random(table.getn(filesInnocent))
+                                    end
+                                    net.Start("ttt_end_random_music");
+                                    net.WriteString( "innocent/"..filesInnocent[musicTitle] );
+                                    net.Broadcast();
+                                else
+                                    print("[End_Random_Music] Error: No files to play for wintype")
+                                end
+                            else
+                                if (filesTimeout != nil) then
+                                    for n = 0, 10 do
+                                        math.randomseed(os.time())
+                                        musicTitle = math.random(table.getn(filesTimeout))
+                                    end
+                                    net.Start("ttt_end_random_music");
+                                    net.WriteString( "timeout/"..filesTimeout[musicTitle] );
+                                    net.Broadcast();
+                                else
+                                    print("[End_Random_Music] Error: No files to play for wintype")
+                                end
+                            end
                         end
                     --Traitor
                     elseif (wintype == "traitors") then
@@ -534,6 +619,19 @@ if SERVER then
                             end
                             net.Start("ttt_end_random_music");
                                 net.WriteString( "ttt2_serialkiller/"..filesTTT2Serialkiller[musicTitle] );
+                            net.Broadcast();
+                        else
+                            print("[End_Random_Music] Error: No files to play for wintype")
+                        end
+                    --Hiddens
+                    elseif (wintype == "hiddens") then
+                        if (filesTTT2Hidden != nil) then
+                            for n = 0, 10 do
+                                math.randomseed(os.time())
+                                musicTitle = math.random(table.getn(filesTTT2Hidden))
+                            end
+                            net.Start("ttt_end_random_music");
+                                net.WriteString( "ttt2_hidden/"..filesTTT2Hidden[musicTitle] );
                             net.Broadcast();
                         else
                             print("[End_Random_Music] Error: No files to play for wintype")
